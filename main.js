@@ -23,8 +23,8 @@ let frame = 0
 // _____|HANDLE OBJECTS| _____// 
 //==============================
 let blobs = []
-for (let max = 0;max<1;max++){
-  blobs.push(new Blob(400,400))
+for (let max = 0;max<5;max++){
+  blobs.push(new Blob(460,100,5))
 }
 
 let foods = []

@@ -3,9 +3,9 @@ import {random} from "../tools/random.js";
 
 class Blob {
 
-    constructor(x,y){
-        this.x = x
-        this.y = y
+    constructor(x,y,spd){
+        this.x = random(0,c.width)
+        this.y = random(0,c.height)
 
         this.speed = 20
 
@@ -15,11 +15,11 @@ class Blob {
         this.dx = 0
         this.dy = 0
 
-        this.speed = 3
+        this.speed = spd
 
         this.margin = 30
 
-        this.vision = 60
+        this.vision = 40
 
         this.xCenter = this.x+ this.width/2
         this.yCenter = this.y- this.height/2
@@ -35,27 +35,30 @@ class Blob {
         if (this.dx < Nspd){this.dx=Nspd}
         if (this.dy > spd){this.dy=spd}
         if (this.dy < Nspd){this.dy=Nspd}
-        if (this.x + this.dx >= c.width -this.margin || this.x + this.dx <= 0 + this.margin){this.dx = this.dx*-1}
-        if (this.y + this.dy >= c.height -this.margin || this.y + this.dy <= 0 + this.margin){this.dy = this.dy*-1}
     }
 
     goToFood(objective,foods){
         let spd = this.speed
         let goTo = {x:objective.x-this.x,y:objective.y-this.y}
-        if (goTo.x < 0 ){
-            this.x += -1 * spd
-        }else if (goTo.x > 0 ){
-            this.x += 1 * spd
-        } if (goTo.y < 0 ){
-            this.y += -1 * spd
-        }else if (goTo.y > 0 ){
-            this.y += 1 * spd
+        let i = 0
+        while (i <= spd){
+            if (goTo.x < 0 ){
+                this.x += -1 
+            }else if (goTo.x > 0 ){
+                this.x += 1 
+            } if (goTo.y < 0 ){
+                this.y += -1 
+            }else if (goTo.y > 0 ){
+                this.y += 1 
+            }
+            i += 1
+            goTo = {x:objective.x-this.x,y:objective.y-this.y}
         }
     }
 
     drawVision(){
         ctx.beginPath();
-        ctx.arc(this.xCenter, this.yCenter, this.vision, 0, 2 * Math.PI);
+        ctx.arc(this.xCenter+this.dx, this.yCenter+this.dy, this.vision, 0, 2 * Math.PI);
         ctx.fill();
     }
 
@@ -94,6 +97,10 @@ class Blob {
     update(gameFrame,foods){
         this.xCenter = this.x+ this.width/2
         this.yCenter = this.y- this.height/2
+        // wall detection 
+        if (this.x + this.dx >= c.width -this.margin || this.x + this.dx <= 0 + this.margin){this.dx = this.dx*-1}
+        if (this.y + this.dy >= c.height -this.margin || this.y + this.dy <= 0 + this.margin){this.dy = this.dy*-1}
+        // Go to food or moove randomly
         this.foodToGo(foods)
         if (this.closeFoods.length != 0){
             this.closeFoods.sort(function(a, b) {
