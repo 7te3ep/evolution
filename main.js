@@ -45,7 +45,6 @@ function handleFoods(frame){
     foods[i].update(frame)
     foods[i].draw()
     if (foods[i].eat){
-      console.log("aa")
       foods.splice(i,1)
       i --
     }

@@ -19,7 +19,7 @@ class Blob {
 
         this.margin = 30
 
-        this.vision = 100
+        this.vision = 60
 
         this.xCenter = this.x+ this.width/2
         this.yCenter = this.y- this.height/2
@@ -39,14 +39,18 @@ class Blob {
         if (this.y + this.dy >= c.height -this.margin || this.y + this.dy <= 0 + this.margin){this.dy = this.dy*-1}
     }
 
-    goToFood(objective){
-        this.obj = objective
-        var diff = {x:this.x-this.obj.x,y:this.y-this.obj.y}
-        var dist = Math.sqrt((diff.x ** 2) + (diff.y ** 2))
-
-        var dir = {x:Math.ceil((diff.x/dist)*this.speed), y:Math.ceil((diff.y/dist)*this.speed)}
-        this.x -= dir.x 
-        this.y -= dir.y
+    goToFood(objective,foods){
+        let spd = this.speed
+        let goTo = {x:objective.x-this.x,y:objective.y-this.y}
+        if (goTo.x < 0 ){
+            this.x += -1 * spd
+        }else if (goTo.x > 0 ){
+            this.x += 1 * spd
+        } if (goTo.y < 0 ){
+            this.y += -1 * spd
+        }else if (goTo.y > 0 ){
+            this.y += 1 * spd
+        }
     }
 
     drawVision(){
@@ -76,12 +80,13 @@ class Blob {
             }
             let distX = this.x - x
             let distY = this.y - y
-            let dist = Math.sqrt(distX*distX+distY*distY)
+            let dist = Math.round(Math.sqrt(distX*distX+distY*distY))
             if (dist < this.vision){
                 this.closeFoods.push({food:element,dist:dist})
             }
             if (dist < this.width || dist < this.height ){
                 element.eat = true
+                this.closeFoods.splice(1,0)
             }
         });
     }
@@ -94,15 +99,14 @@ class Blob {
             this.closeFoods.sort(function(a, b) {
                 return a.dist - b.dist;
             });
-            this.goToFood({x:this.closeFoods[0].food.x,y:this.closeFoods[0].food.y})
+            this.goToFood({x:this.closeFoods[0].food.x,y:this.closeFoods[0].food.y},foods)
         }else {
             if (gameFrame%10 == 0){
                 this.changeDirection()
             }
+            this.x += this.dx
+            this.y += this.dy
         }
-
-        this.x += this.dx
-        this.y += this.dy
     }
 
     draw(){
